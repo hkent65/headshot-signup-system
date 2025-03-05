@@ -22,31 +22,43 @@ A web application for scheduling faculty and staff professional headshots.
 
 1. A [Vercel](https://vercel.com) account
 2. A [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) database
+3. A [GitHub](https://github.com) account
 
 ### Steps to Deploy
 
-1. Fork or clone this repository to your GitHub account
-2. Install the Vercel CLI:
-   ```
-   npm i -g vercel
-   ```
-3. Login to Vercel:
-   ```
-   vercel login
-   ```
-4. Configure environment variables in Vercel:
-   - Create a MongoDB Atlas database and get your connection string
-   - Set up all environment variables listed in `.env.example`
+1. Set up your GitHub repository:
+   - Create a new GitHub repository
+   - Push this codebase to your GitHub repository using the commands:
+     ```
+     git remote add origin https://github.com/YOUR_USERNAME/headshot-signup-system.git
+     git push -u origin main
+     ```
 
-5. Deploy to Vercel:
-   ```
-   vercel
-   ```
+2. Set up MongoDB Atlas:
+   - Create a MongoDB Atlas account and set up a free cluster
+   - Create a database user and get your connection string
+   - Update your `.env` file with the real MongoDB connection string
 
-6. For production deployment:
-   ```
-   vercel --prod
-   ```
+3. Deploy to Vercel:
+   - Go to [vercel.com](https://vercel.com) and sign up or log in
+   - Click "Add New" > "Project"
+   - Import your GitHub repository
+   - Configure the project:
+     - Framework Preset: Other
+     - Root Directory: ./
+     - Build Command: npm install
+     - Output Directory: public
+   - Configure environment variables:
+     - Copy all variables from your `.env` file
+     - Ensure MONGODB_URI has your actual MongoDB Atlas connection string
+     - Set NODE_ENV to "production"
+   - Deploy!
+
+4. For subsequent deployments after making changes:
+   - Commit and push your changes to GitHub
+   - Vercel will automatically deploy the updates
+
+For more detailed instructions, see the [DEPLOYMENT.md](DEPLOYMENT.md) file.
 
 ## Local Development
 
