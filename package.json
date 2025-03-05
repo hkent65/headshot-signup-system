@@ -11,7 +11,9 @@
     "dev": "nodemon server.js",
     "test": "jest",
     "share": "node ngrok.js",
-    "setup-ngrok": "node ngrok-setup.js"
+    "setup-ngrok": "node ngrok-setup.js",
+    "test-db": "node test-db-connection.js",
+    "test-memory-db": "node test-memory-db.js"
   },
   "dependencies": {
     "bcrypt": "^5.1.1",
@@ -26,6 +28,7 @@
   },
   "devDependencies": {
     "jest": "^29.7.0",
+    "mongodb-memory-server": "^10.1.4",
     "ngrok": "^5.0.0-beta.2",
     "nodemon": "^3.0.3",
     "supertest": "^6.3.4"

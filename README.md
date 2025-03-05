@@ -68,7 +68,15 @@ For more detailed instructions, see the [DEPLOYMENT.md](DEPLOYMENT.md) file.
    npm install
    ```
 3. Create a `.env` file based on `.env.example`
-4. Start the development server:
+4. Database options:
+   - **Option 1 (Recommended)**: Use MongoDB Atlas (see [MONGODB-SETUP.md](MONGODB-SETUP.md))
+   - **Option 2 (Dev only)**: Use in-memory MongoDB (already configured)
+5. Test your database connection:
+   ```
+   npm run test-db        # Test real MongoDB connection
+   npm run test-memory-db # Test in-memory MongoDB
+   ```
+6. Start the development server:
    ```
    npm run dev
    ```

@@ -11,19 +11,53 @@ const { basicAuth } = require("./middleware/auth");
 // Initialize Express app
 const app = express();
 
-// Connect to MongoDB with improved error handling for deployment
-mongoose.connect(config.database.uri, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-})
-.then(() => console.log("Connected to MongoDB"))
-.catch(err => {
-  console.error("MongoDB connection error:", err);
-  // In production, we might want to exit the process if DB connection fails
-  if (config.server.environment === 'production') {
-    console.error("Database connection critical in production, check your Vercel environment variables");
+// Setup database connection
+const connectToDatabase = async () => {
+  // Check if we're in development mode and using localhost
+  if (config.server.environment === 'development' && config.database.uri.includes('localhost')) {
+    try {
+      // Only require this in development to avoid affecting production builds
+      const { MongoMemoryServer } = require('mongodb-memory-server');
+      const mongoServer = await MongoMemoryServer.create();
+      const mongoUri = mongoServer.getUri();
+      
+      console.log("Using MongoDB Memory Server for development");
+      await mongoose.connect(mongoUri);
+      console.log("Connected to MongoDB Memory Server");
+      
+      // Add shutdown handler
+      process.on('SIGINT', async () => {
+        await mongoose.disconnect();
+        await mongoServer.stop();
+        console.log('MongoDB Memory Server stopped');
+        process.exit(0);
+      });
+    } catch (err) {
+      console.error("Failed to start MongoDB Memory Server, falling back to configured URI");
+      await connectToConfiguredDatabase();
+    }
+  } else {
+    await connectToConfiguredDatabase();
   }
-});
+};
+
+// Connect to the database URI specified in config
+const connectToConfiguredDatabase = async () => {
+  try {
+    await mongoose.connect(config.database.uri);
+    console.log("Connected to MongoDB");
+  } catch (err) {
+    console.error("MongoDB connection error:", err);
+    console.error("Current MongoDB URI (masked):", config.database.uri.replace(/:([^:@]+)@/, ":****@"));
+    // In production, we might want to exit the process if DB connection fails
+    if (config.server.environment === 'production') {
+      console.error("Database connection critical in production, check your Vercel environment variables");
+    }
+  }
+};
+
+// Initialize database connection
+connectToDatabase();
 
 // Define User model
 const User = mongoose.model("User", {
