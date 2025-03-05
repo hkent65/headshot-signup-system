@@ -13,8 +13,9 @@ const app = express();
 
 // Setup database connection
 const connectToDatabase = async () => {
-  // Check if we're in development mode and using localhost
-  if (config.server.environment === 'development' && config.database.uri.includes('localhost')) {
+  // Check if we're explicitly using memory DB or in development mode with localhost URI
+  if (process.env.USE_MEMORY_DB === 'true' || 
+      (config.server.environment === 'development' && config.database.uri.includes('localhost'))) {
     try {
       // Only require this in development to avoid affecting production builds
       const { MongoMemoryServer } = require('mongodb-memory-server');
