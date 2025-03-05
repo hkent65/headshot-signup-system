@@ -11,13 +11,19 @@ const { basicAuth } = require("./middleware/auth");
 // Initialize Express app
 const app = express();
 
-// Connect to MongoDB
+// Connect to MongoDB with improved error handling for deployment
 mongoose.connect(config.database.uri, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 })
 .then(() => console.log("Connected to MongoDB"))
-.catch(err => console.error("MongoDB connection error:", err));
+.catch(err => {
+  console.error("MongoDB connection error:", err);
+  // In production, we might want to exit the process if DB connection fails
+  if (config.server.environment === 'production') {
+    console.error("Database connection critical in production, check your Vercel environment variables");
+  }
+});
 
 // Define User model
 const User = mongoose.model("User", {
@@ -461,11 +467,11 @@ app.get("/user/validate", (req, res) => {
   res.status(200).json({ valid: true });
 });
 
-// Start server
-const PORT = config.server.port;
-const HOST = config.server.host;
+// Start server - configured for both local development and Vercel deployment
+const PORT = process.env.PORT || config.server.port || 3000;
 
 // Allow application to be accessed from any IP address
+// Note: Vercel handles this differently in production and will override these settings
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`\n${config.app.name} Server Started`);
   console.log(`---------------------------------------`);
