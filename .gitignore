@@ -19,19 +19,6 @@ logs
 /dist
 /build
 
-# Dependency directories
-/.pnp
-.pnp.js
-
-# Testing
-/coverage
-
-# IDE and editor folders
-/.idea
-/.vscode
-*.swp
-*.swo
-
 # OS files
 .DS_Store
 Thumbs.db
@@ -39,5 +26,5 @@ Thumbs.db
 # Vercel
 .vercel
 
-# ngrok
-ngrok-url.txt
+# MongoDB memory server cache
+**/mongodb-memory-server/
