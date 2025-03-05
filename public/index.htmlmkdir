@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faculty & Staff Headshot Signup</title>
+    <style>
+        body {
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+        }
+        
+        .form-section {
+            margin-bottom: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        
+        .time-slots {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .time-slot {
+            padding: 10px;
+            background-color: #e8f4f8;
+            border: 1px solid #b8daff;
+            border-radius: 4px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .time-slot:hover:not(.booked):not(.selected) {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+        }
+        
+        .time-slot.selected {
+            background-color: #28a745;
+            color: white;
+            border-color: #28a745;
+        }
+        
+        .time-slot.booked {
+            background-color: #e2e3e5;
+            color: #818182;
+            cursor: not-allowed;
+            border-color: #d6d8db;
+        }
+        
+        .buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+        
+        button {
+            padding: 12px 24px;
+            font-size: 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .btn-submit {
+            background-color: #007bff;
+            color: white;
+        }
+        
+        .btn-submit:hover {
+            background-color: #0069d9;
+        }
+        
+        .btn-cancel {
+            background-color: #dc3545;
+            color: white;
+        }
+        
+        .btn-cancel:hover {
+            background-color: #c82333;
+        }
+        
+        .login-container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .error-message {
+            color: #dc3545;
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #f8d7da;
+            border-radius: 4px;
+            text-align: center;
+        }
+        
+        .success-message {
+            color: #28a745;
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #d4edda;
+            border-radius: 4px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div id="login-section" class="login-container">
+        <h1>Faculty & Staff Headshot Login</h1>
+        <div id="login-error" class="error-message hidden"></div>
+        <form id="login-form">
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="login-email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="login-password" name="password" required>
+            </div>
+            <div class="buttons">
+                <button type="submit" class="btn-submit">Login</button>
+                <button type="button" id="signup-toggle" class="btn-submit">New User? Sign Up</button>
+            </div>
+        </form>
+    </div>
+
+    <div id="signup-section" class="login-container hidden">
+        <h1>Create Account</h1>
+        <div id="signup-error" class="error-message hidden"></div>
+        <form id="signup-form">
+            <div class="form-group">
+                <label for="name">Full Name:</label>
+                <input type="text" id="signup-name" name="name" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="signup-email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="signup-password" name="password" required minlength="8">
+            </div>
+            <div class="form-group">
+                <label for="department">Department:</label>
+                <input type="text" id="signup-department" name="department" required>
+            </div>
+            <div class="form-group">
+                <label for="position">Position:</label>
+                <input type="text" id="signup-position" name="position" required>
+            </div>
+            <div class="buttons">
+                <button type="submit" class="btn-submit">Create Account</button>
+                <button type="button" id="login-toggle" class="btn-submit">Back to Login</button>
+            </div>
+        </form>
+    </div>
+
+    <div id="main-section" class="container hidden">
+        <h1>Faculty & Staff Headshot Signup</h1>
+        <div id="appointment-success" class="success-message hidden"></div>
+        <div id="appointment-error" class="error-message hidden"></div>
+        
+        <div class="form-section">
+            <h2>Your Information</h2>
+            <p id="user-info">Logged in as: <span id="user-name"></span> | <span id="user-email"></span> | <span id="user-department"></span> | <span id="user-position"></span></p>
+        </div>
+        
+        <div class="form-section">
+            <h2>Select a Date</h2>
+            <div class="form-group">
+                <input type="date" id="appointment-date" min="" required>
+            </div>
+        </div>
+        
+        <div class="form-section">
+            <h2>Available Time Slots</h2>
+            <div class="time-slots" id="time-slots-container">
+                <!-- Time slots will be generated here -->
+            </div>
+        </div>
+        
+        <div class="form-section" id="your-appointment" style="display: none;">
+            <h2>Your Current Appointment</h2>
+            <p>Date: <span id="current-date"></span></p>
+            <p>Time: <span id="current-time"></span></p>
+            <button type="button" id="cancel-appointment" class="btn-cancel">Cancel Appointment</button>
+        </div>
+        
+        <div class="buttons">
+            <button type="button" id="book-appointment" class="btn-submit">Book Appointment</button>
+            <button type="button" id="logout" class="btn-cancel">Logout</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Set minimum date to today
+            const today = new Date();
+            const formattedDate = today.toISOString().split("T")[0];
+            document.getElementById("appointment-date").min = formattedDate;
+            
+            // Toggle between login and signup forms
+            document.getElementById("signup-toggle").addEventListener("click", function() {
+                document.getElementById("login-section").classList.add("hidden");
+                document.getElementById("signup-section").classList.remove("hidden");
+            });
+            
+            document.getElementById("login-toggle").addEventListener("click", function() {
+                document.getElementById("signup-section").classList.add("hidden");
+                document.getElementById("login-section").classList.remove("hidden");
+            });
+            
+            // Login form submission
+            document.getElementById("login-form").addEventListener("submit", function(e) {
+                e.preventDefault();
+                const email = document.getElementById("login-email").value;
+                const password = document.getElementById("login-password").value;
+                
+                // Call login API
+                fetch("/user/login", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ email, password }),
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Login failed");
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Save token and user info
+                    localStorage.setItem("token", data.token);
+                    localStorage.setItem("user", JSON.stringify(data.user));
+                    
+                    // Display user info
+                    document.getElementById("user-name").textContent = data.user.name;
+                    document.getElementById("user-email").textContent = data.user.email;
+                    document.getElementById("user-department").textContent = data.user.department;
+                    document.getElementById("user-position").textContent = data.user.position;
+                    
+                    // Show main section and hide login
+                    document.getElementById("login-section").classList.add("hidden");
+                    document.getElementById("main-section").classList.remove("hidden");
+                    
+                    // Check if user has an appointment
+                    checkExistingAppointment();
+                    
+                    // Generate time slots for today
+                    generateTimeSlots(formattedDate);
+                })
+                .catch(error => {
+                    document.getElementById("login-error").textContent = "Invalid email or password";
+                    document.getElementById("login-error").classList.remove("hidden");
+                });
+            });
+            
+            // Signup form submission
+            document.getElementById("signup-form").addEventListener("submit", function(e) {
+                e.preventDefault();
+                const name = document.getElementById("signup-name").value;
+                const email = document.getElementById("signup-email").value;
+                const password = document.getElementById("signup-password").value;
+                const department = document.getElementById("signup-department").value;
+                const position = document.getElementById("signup-position").value;
+                
+                // Call signup API
+                fetch("/user/signup", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ name, email, password, department, position }),
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Signup failed");
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Auto login after successful signup
+                    localStorage.setItem("token", data.token);
+                    localStorage.setItem("user", JSON.stringify(data.user));
+                    
+                    // Display user info
+                    document.getElementById("user-name").textContent = data.user.name;
+                    document.getElementById("user-email").textContent = data.user.email;
+                    document.getElementById("user-department").textContent = data.user.department;
+                    document.getElementById("user-position").textContent = data.user.position;
+                    
+                    // Show main section and hide signup
+                    document.getElementById("signup-section").classList.add("hidden");
+                    document.getElementById("main-section").classList.remove("hidden");
+                    
+                    // Generate time slots for today
+                    generateTimeSlots(formattedDate);
+                })
+                .catch(error => {
+                    document.getElementById("signup-error").textContent = "Signup failed. Email may already be in use.";
+                    document.getElementById("signup-error").classList.remove("hidden");
+                });
+            });
+            
+            // Date change event
+            document.getElementById("appointment-date").addEventListener("change", function(e) {
+                const selectedDate = e.target.value;
+                generateTimeSlots(selectedDate);
+            });
+            
+            // Logout functionality
+            document.getElementById("logout").addEventListener("click", function() {
+                localStorage.removeItem("token");
+                localStorage.removeItem("user");
+                document.getElementById("main-section").classList.add("hidden");
+                document.getElementById("login-section").classList.remove("hidden");
+                document.getElementById("login-form").reset();
+            });
+            
+            // Book appointment button
+            document.getElementById("book-appointment").addEventListener("click", function() {
+                const selectedSlot = document.querySelector(".time-slot.selected");
+                if (!selectedSlot) {
+                    document.getElementById("appointment-error").textContent = "Please select a time slot";
+                    document.getElementById("appointment-error").classList.remove("hidden");
+                    return;
+                }
+                
+                const date = document.getElementById("appointment-date").value;
+                const time = selectedSlot.getAttribute("data-time");
+                const user = JSON.parse(localStorage.getItem("user"));
+                
+                // Call book appointment API
+                fetch("/appointments/book", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": "Bearer " + localStorage.getItem("token")
+                    },
+                    body: JSON.stringify({ 
+                        userId: user.id,
+                        date: date,
+                        time: time
+                    }),
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Booking failed");
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    document.getElementById("appointment-success").textContent = "Appointment booked successfully!";
+                    document.getElementById("appointment-success").classList.remove("hidden");
+                    document.getElementById("appointment-error").classList.add("hidden");
+                    
+                    // Update current appointment display
+                    document.getElementById("current-date").textContent = date;
+                    document.getElementById("current-time").textContent = time;
+                    document.getElementById("your-appointment").style.display = "block";
+                    
+                    // Mark slot as booked
+                    selectedSlot.classList.remove("selected");
+                    selectedSlot.classList.add("booked");
+                    selectedSlot.setAttribute("title", "Booked by you");
+                })
+                .catch(error => {
+                    document.getElementById("appointment-error").textContent = "Failed to book appointment. Please try again.";
+                    document.getElementById("appointment-error").classList.remove("hidden");
+                    document.getElementById("appointment-success").classList.add("hidden");
+                });
+            });
+            
+            // Cancel appointment button
+            document.getElementById("cancel-appointment").addEventListener("click", function() {
+                const user = JSON.parse(localStorage.getItem("user"));
+                
+                // Call cancel appointment API
+                fetch("/appointments/cancel", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": "Bearer " + localStorage.getItem("token")
+                    },
+                    body: JSON.stringify({ userId: user.id }),
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Cancellation failed");
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    document.getElementById("appointment-success").textContent = "Appointment cancelled successfully!";
+                    document.getElementById("appointment-success").classList.remove("hidden");
+                    document.getElementById("appointment-error").classList.add("hidden");
+                    
+                    // Hide current appointment display
+                    document.getElementById("your-appointment").style.display = "none";
+                    
+                    // Refresh time slots
+                    const currentDate = document.getElementById("appointment-date").value;
+                    generateTimeSlots(currentDate);
+                })
+                .catch(error => {
+                    document.getElementById("appointment-error").textContent = "Failed to cancel appointment. Please try again.";
+                    document.getElementById("appointment-error").classList.remove("hidden");
+                    document.getElementById("appointment-success").classList.add("hidden");
+                });
+            });
+            
+            // Function to generate time slots
+            function generateTimeSlots(date) {
+                const container = document.getElementById("time-slots-container");
+                container.innerHTML = ""; // Clear existing slots
+                
+                // Call API to get booked slots for the date
+                fetch(`/appointments/slots?date=${date}`, {
+                    method: "GET",
+                    headers: {
+                        "Authorization": "Bearer " + localStorage.getItem("token")
+                    }
+                })
+                .then(response => response.json())
+                .then(bookedSlots => {
+                    // Generate slots from 9:00 AM to 10:55 AM in 5-minute increments
+                    for (let hour = 9; hour < 11; hour++) {
+                        for (let minute = 0; minute < 60; minute += 5) {
+                            // Skip 11:00 AM
+                            if (hour === 10 && minute === 55) continue;
+                            
+                            const formattedHour = hour.toString().padStart(2, "0");
+                            const formattedMinute = minute.toString().padStart(2, "0");
+                            const timeString = `${formattedHour}:${formattedMinute}`;
+                            
+                            const slot = document.createElement("div");
+                            slot.classList.add("time-slot");
+                            slot.setAttribute("data-time", timeString);
+                            slot.textContent = timeString;
+                            
+                            // Check if slot is booked
+                            const isBooked = bookedSlots.some(bookedSlot => bookedSlot.time === timeString);
+                            const isYourBooking = bookedSlots.some(bookedSlot => 
+                                bookedSlot.time === timeString && 
+                                bookedSlot.userId === JSON.parse(localStorage.getItem("user")).id
+                            );
+                            
+                            if (isBooked) {
+                                slot.classList.add("booked");
+                                if (isYourBooking) {
+                                    slot.setAttribute("title", "Booked by you");
+                                } else {
+                                    slot.setAttribute("title", "Booked");
+                                }
+                            } else {
+                                // Add click event for available slots
+                                slot.addEventListener("click", function() {
+                                    // Deselect any previously selected slot
+                                    const previousSelected = document.querySelector(".time-slot.selected");
+                                    if (previousSelected) {
+                                        previousSelected.classList.remove("selected");
+                                    }
+                                    
+                                    // Select this slot
+                                    slot.classList.add("selected");
+                                });
+                            }
+                            
+                            container.appendChild(slot);
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error("Error fetching booked slots:", error);
+                });
+            }
+            
+            // Function to check if user has an existing appointment
+            function checkExistingAppointment() {
+                const user = JSON.parse(localStorage.getItem("user"));
+                
+                fetch(`/appointments/user/${user.id}`, {
+                    method: "GET",
+                    headers: {
+                        "Authorization": "Bearer " + localStorage.getItem("token")
+                    }
+                })
+                .then(response => response.json())
+                .then(appointment => {
+                    if (appointment && appointment.date) {
+                        // Display current appointment
+                        document.getElementById("current-date").textContent = appointment.date;
+                        document.getElementById("current-time").textContent = appointment.time;
+                        document.getElementById("your-appointment").style.display = "block";
+                        
+                        // Set the date picker to the appointment date
+                        document.getElementById("appointment-date").value = appointment.date;
+                        
+                        // Generate time slots for that date
+                        generateTimeSlots(appointment.date);
+                    }
+                })
+                .catch(error => {
+                    console.error("Error checking existing appointment:", error);
+                });
+            }
+            
+            // Check if user is already logged in (token exists in localStorage)
+            const token = localStorage.getItem("token");
+            if (token) {
+                const user = JSON.parse(localStorage.getItem("user"));
+                
+                // Validate token with server
+                fetch("/user/validate", {
+                    method: "GET",
+                    headers: {
+                        "Authorization": "Bearer " + token
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Invalid token");
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Display user info
+                    document.getElementById("user-name").textContent = user.name;
+                    document.getElementById("user-email").textContent = user.email;
+                    document.getElementById("user-department").textContent = user.department;
+                    document.getElementById("user-position").textContent = user.position;
+                    
+                    // Show main section and hide login
+                    document.getElementById("login-section").classList.add("hidden");
+                    document.getElementById("main-section").classList.remove("hidden");
+                    
+                    // Check if user has an appointment
+                    checkExistingAppointment();
+                    
+                    // Generate time slots for today
+                    generateTimeSlots(formattedDate);
+                })
+                .catch(error => {
+                    // Token invalid, remove it
+                    localStorage.removeItem("token");
+                    localStorage.removeItem("user");
+                });
+            }
+        });
+    </script>
+</body>
+</html> -p public

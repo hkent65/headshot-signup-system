@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Faculty & Staff Headshot Signup</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #500000;
+      --primary-light: #700000;
+      --primary-dark: #300000;
+      --primary-gradient: linear-gradient(135deg, #500000 0%, #700000 100%);
+      --gray-light: #f7f7f7;
+      --gray-medium: #e0e0e0;
+      --gray-dark: #444;
+      --success: #2ecc71;
+      --danger: #e74c3c;
+      --warning: #f39c12;
+      --box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+      --box-shadow-hover: 0 12px 40px rgba(0, 0, 0, 0.18);
+      --text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Poppins', -apple-system, BlinkMacSystemFont, Roboto, Oxygen, Ubuntu, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background: var(--gray-light);
+      min-height: 100vh;
+      position: relative;
+      padding-bottom: 60px;
+    }
+    
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 300px;
+      background: var(--primary-gradient);
+      z-index: -1;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 30px 20px;
+    }
+    
+    .logo-section {
+      text-align: center;
+      margin-bottom: 30px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .logo-section img {
+      max-height: 80px;
+      filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.2));
+    }
+    
+    h1 {
+      color: white;
+      margin-bottom: 15px;
+      text-align: center;
+      font-size: 2.5rem;
+      font-weight: 700;
+      text-shadow: var(--text-shadow);
+      letter-spacing: -0.5px;
+    }
+    
+    p.subtitle {
+      text-align: center;
+      margin-bottom: 40px;
+      color: white;
+      font-size: 1.2rem;
+      opacity: 0.9;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    
+    .form-container, .lookup-container {
+      background: white;
+      border-radius: 12px;
+      box-shadow: var(--box-shadow);
+      padding: 40px;
+      margin-bottom: 40px;
+      transition: box-shadow 0.3s ease;
+      position: relative;
+    }
+    
+    .form-container:hover, .lookup-container:hover {
+      box-shadow: var(--box-shadow-hover);
+    }
+    
+    .form-title {
+      font-size: 1.8rem;
+      margin-bottom: 30px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid var(--gray-medium);
+      color: var(--primary-color);
+      font-weight: 600;
+    }
+    
+    .form-section {
+      margin-bottom: 35px;
+    }
+    
+    .form-section h3 {
+      margin-bottom: 15px;
+      color: #333;
+      font-weight: 600;
+      font-size: 1.3rem;
+    }
+    
+    .form-section p {
+      margin-bottom: 20px;
+      color: var(--gray-dark);
+    }
+    
+    .form-row {
+      display: flex;
+      flex-wrap: wrap;
+      margin: 0 -15px 20px;
+    }
+    
+    .form-group {
+      flex: 1 0 250px;
+      padding: 0 15px;
+      margin-bottom: 25px;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: #333;
+      font-size: 0.95rem;
+    }
+    
+    input, select {
+      width: 100%;
+      padding: 12px 15px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: all 0.3s;
+      font-family: 'Poppins', sans-serif;
+    }
+    
+    input:hover, select:hover {
+      border-color: #bbb;
+    }
+    
+    input:focus, select:focus {
+      border-color: var(--primary-color);
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(80, 0, 0, 0.15);
+    }
+    
+    .required:after {
+      content: " *";
+      color: var(--danger);
+    }
+    
+    .time-slots {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 12px;
+      margin-bottom: 30px;
+    }
+    
+    .time-slot {
+      border: 1px solid var(--gray-medium);
+      border-radius: 8px;
+      padding: 12px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-weight: 500;
+    }
+    
+    .time-slot:hover {
+      background-color: var(--gray-light);
+      transform: translateY(-2px);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    }
+    
+    .time-slot.selected {
+      background-color: var(--primary-color);
+      color: white;
+      border-color: var(--primary-color);
+      box-shadow: 0 4px 12px rgba(80, 0, 0, 0.2);
+      transform: translateY(-3px);
+    }
+    
+    .time-slot.unavailable {
+      background-color: var(--gray-medium);
+      color: var(--gray-dark);
+      cursor: not-allowed;
+      opacity: 0.7;
+      text-decoration: line-through;
+      transform: none;
+      box-shadow: none;
+    }
+    
+    .action-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 40px;
+      gap: 20px;
+    }
+    
+    .btn {
+      padding: 14px 25px;
+      font-size: 1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s;
+      letter-spacing: 0.5px;
+      font-family: 'Poppins', sans-serif;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+    
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+    
+    .btn:active {
+      transform: translateY(0);
+    }
+    
+    .btn-primary {
+      background: var(--primary-gradient);
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #600000 0%, #800000 100%);
+    }
+    
+    .btn-outline {
+      background-color: white;
+      border: 2px solid var(--primary-color);
+      color: var(--primary-color);
+      box-shadow: none;
+    }
+    
+    .btn-outline:hover {
+      background-color: var(--gray-light);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .btn-danger {
+      background-color: var(--danger);
+      color: white;
+    }
+    
+    .btn-danger:hover {
+      background-color: #c0392b;
+    }
+    
+    .hidden {
+      display: none;
+    }
+    
+    /* Lookup section styling */
+    .appointment-card {
+      background-color: var(--gray-light);
+      border-radius: 12px;
+      padding: 25px;
+      margin-top: 25px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    }
+    
+    .appointment-details {
+      margin-bottom: 25px;
+    }
+    
+    .appointment-card h3 {
+      margin-bottom: 20px;
+      font-size: 1.4rem;
+      color: var(--primary-color);
+    }
+    
+    .appointment-details p {
+      margin: 10px 0;
+      display: flex;
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+      padding-bottom: 10px;
+    }
+    
+    .detail-label {
+      font-weight: 600;
+      display: inline-block;
+      width: 150px;
+      color: #444;
+    }
+    
+    /* Toast notifications */
+    .toast {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 18px 25px;
+      background: white;
+      color: #333;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
+      border-radius: 8px;
+      z-index: 1000;
+      opacity: 0;
+      transform: translateY(-20px);
+      transition: all 0.3s;
+      font-weight: 500;
+      max-width: 350px;
+    }
+    
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    .toast.success {
+      border-left: 5px solid var(--success);
+    }
+    
+    .toast.error {
+      border-left: 5px solid var(--danger);
+    }
+    
+    .toast.warning {
+      border-left: 5px solid var(--warning);
+    }
+    
+    .no-slots-message {
+      padding: 25px;
+      background-color: var(--gray-light);
+      border-radius: 8px;
+      text-align: center;
+      color: var(--gray-dark);
+      font-style: italic;
+      margin-top: 15px;
+      box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+    
+    /* Decoration elements */
+    .decoration {
+      position: absolute;
+      z-index: -1;
+      opacity: 0.15;
+    }
+    
+    .decoration.top-right {
+      top: -20px;
+      right: -20px;
+      width: 150px;
+      height: 150px;
+      background: var(--primary-color);
+      border-radius: 50%;
+    }
+    
+    .decoration.bottom-left {
+      bottom: -30px;
+      left: -30px;
+      width: 100px;
+      height: 100px;
+      background: var(--primary-color);
+      border-radius: 50%;
+      transform: rotate(45deg);
+    }
+    
+    /* Footer */
+    .footer {
+      text-align: center;
+      margin-top: 40px;
+      padding: 20px 0;
+      color: var(--gray-dark);
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 992px) {
+      .container {
+        padding: 20px 15px;
+      }
+      
+      .form-container, .lookup-container {
+        padding: 30px;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      body::before {
+        height: 250px;
+      }
+      
+      h1 {
+        font-size: 2rem;
+      }
+      
+      .time-slots {
+        grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+      }
+      
+      .form-group {
+        flex: 1 0 100%;
+      }
+      
+      .action-buttons {
+        flex-direction: column;
+        gap: 15px;
+      }
+      
+      .btn {
+        width: 100%;
+      }
+      
+      .form-container, .lookup-container {
+        padding: 25px 20px;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 1.8rem;
+      }
+      
+      p.subtitle {
+        font-size: 1rem;
+      }
+      
+      .form-title {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo-section">
+      <!-- Add your logo here if needed -->
+      <!-- <img src="path-to-your-logo.png" alt="Logo"> -->
+    </div>
+    
+    <h1>Faculty & Staff Headshot Signup</h1>
+    <p class="subtitle">Schedule your professional headshot session</p>
+    
+    <div class="form-container" id="signup-form">
+      <div class="decoration top-right"></div>
+      <div class="decoration bottom-left"></div>
+      <h2 class="form-title">New Appointment</h2>
+      <div class="form-section">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="name" class="required">Full Name</label>
+            <input type="text" id="name" placeholder="Enter your full name" required>
+          </div>
+          <div class="form-group">
+            <label for="email" class="required">Email Address</label>
+            <input type="email" id="email" placeholder="your.email@example.com" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="department" class="required">Department</label>
+            <input type="text" id="department" placeholder="Enter your department" required>
+          </div>
+          <div class="form-group">
+            <label for="position" class="required">Position</label>
+            <input type="text" id="position" placeholder="Enter your position" required>
+          </div>
+        </div>
+      </div>
+      
+      <div class="form-section">
+        <h3>Select Photo Session Date:</h3>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="date-select" class="required">Available Dates</label>
+            <select id="date-select" required>
+              <option value="">-- Select a date --</option>
+              <!-- Available dates will be dynamically populated -->
+            </select>
+            <input type="hidden" id="date">
+          </div>
+        </div>
+        
+        <h3>Available Time Slots:</h3>
+        <p>Please select a time for your headshot session.</p>
+        
+        <div class="time-slots" id="time-slots">
+          <!-- Time slots will be dynamically generated here -->
+        </div>
+      </div>
+      
+      <div class="action-buttons">
+        <button type="button" class="btn btn-outline" id="lookup-toggle">Look Up/Cancel Existing Appointment</button>
+        <button type="button" class="btn btn-primary" id="submit-appointment">Schedule Appointment</button>
+      </div>
+    </div>
+    
+    <div class="lookup-container hidden" id="lookup-form">
+      <div class="decoration top-right"></div>
+      <div class="decoration bottom-left"></div>
+      <h2 class="form-title">Look Up or Cancel Your Appointment</h2>
+      <div class="form-section">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="lookup-email" class="required">Email Address</label>
+            <input type="email" id="lookup-email" placeholder="Enter the email used for booking" required>
+          </div>
+        </div>
+        <div class="action-buttons">
+          <button type="button" class="btn btn-outline" id="back-to-signup">Back to Signup</button>
+          <button type="button" class="btn btn-primary" id="lookup-appointment">Look Up Appointment</button>
+        </div>
+      </div>
+      
+      <div id="appointment-result" class="hidden">
+        <div class="appointment-card">
+          <h3>Your Appointment Details</h3>
+          <div class="appointment-details">
+            <p><span class="detail-label">Name:</span> <span id="result-name"></span></p>
+            <p><span class="detail-label">Email:</span> <span id="result-email"></span></p>
+            <p><span class="detail-label">Department:</span> <span id="result-department"></span></p>
+            <p><span class="detail-label">Position:</span> <span id="result-position"></span></p>
+            <p><span class="detail-label">Date:</span> <span id="result-date"></span></p>
+            <p><span class="detail-label">Time:</span> <span id="result-time"></span></p>
+          </div>
+          <button type="button" class="btn btn-danger" id="cancel-appointment">Cancel Appointment</button>
+        </div>
+      </div>
+    </div>
+    
+    <div id="toast" class="toast">
+      <!-- Toast notifications will appear here -->
+    </div>
+    
+    <div class="footer">
+      &copy; 2025 Headshot Appointment System | Privacy Policy
+    </div>
+  </div>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Cache DOM elements
+      const signupForm = document.getElementById('signup-form');
+      const lookupForm = document.getElementById('lookup-form');
+      const lookupToggle = document.getElementById('lookup-toggle');
+      const backToSignup = document.getElementById('back-to-signup');
+      const submitBtn = document.getElementById('submit-appointment');
+      const lookupBtn = document.getElementById('lookup-appointment');
+      const cancelBtn = document.getElementById('cancel-appointment');
+      const appointmentResult = document.getElementById('appointment-result');
+      const timeSlotsContainer = document.getElementById('time-slots');
+      const toast = document.getElementById('toast');
+      
+      // Form fields
+      const nameInput = document.getElementById('name');
+      const emailInput = document.getElementById('email');
+      const departmentInput = document.getElementById('department');
+      const positionInput = document.getElementById('position');
+      const dateSelect = document.getElementById('date-select');
+      const dateInput = document.getElementById('date');
+      const lookupEmailInput = document.getElementById('lookup-email');
+      
+      // Result fields
+      const resultName = document.getElementById('result-name');
+      const resultEmail = document.getElementById('result-email');
+      const resultDepartment = document.getElementById('result-department');
+      const resultPosition = document.getElementById('result-position');
+      const resultDate = document.getElementById('result-date');
+      const resultTime = document.getElementById('result-time');
+      
+      let selectedTimeSlot = null;
+      let selectedAppointmentId = null;
+      
+      // Available session dates - hardcoded for demo
+      const availableDates = [
+        { date: '2025-03-07', label: 'March 7, 2025 (Friday)' },
+        { date: '2025-04-04', label: 'April 4, 2025 (Friday)' },
+        { date: '2025-05-02', label: 'May 2, 2025 (Friday)' },
+        { date: '2025-06-06', label: 'June 6, 2025 (Friday)' }
+      ];
+      
+      // Initialize
+      populateAvailableDates();
+      timeSlotsContainer.innerHTML = '<p class="no-slots-message">Please select a date to view available time slots.</p>';
+      
+      // Toggle between signup and lookup forms
+      lookupToggle.addEventListener('click', function() {
+        signupForm.classList.add('hidden');
+        lookupForm.classList.remove('hidden');
+      });
+      
+      backToSignup.addEventListener('click', function() {
+        lookupForm.classList.add('hidden');
+        signupForm.classList.remove('hidden');
+        appointmentResult.classList.add('hidden');
+      });
+      
+      // Function to populate the date dropdown
+      function populateAvailableDates() {
+        // Clear any existing options except the default
+        while (dateSelect.options.length > 1) {
+          dateSelect.remove(1);
+        }
+        
+        // Get current date
+        const today = new Date();
+        
+        // Only show dates for the next two months
+        const twoMonthsFromNow = new Date();
+        twoMonthsFromNow.setMonth(today.getMonth() + 2);
+        
+        // Filter available dates with custom rules:
+        // - Show March and April sessions immediately
+        // - Show May session only after April 1st
+        // - Show June session only after May 1st
+        const eligibleDates = availableDates.filter(dateObj => {
+          const sessionDate = new Date(dateObj.date);
+          
+          // Check if the session date is within the next two months
+          const isWithinTwoMonths = sessionDate >= today && sessionDate <= twoMonthsFromNow;
+          
+          // Handle May session - only show after April 1st
+          if (sessionDate.getMonth() === 4) { // May is month 4 (zero-based)
+            const april1st = new Date(sessionDate.getFullYear(), 3, 1); // April 1st
+            return isWithinTwoMonths && today >= april1st;
+          }
+          
+          // Handle June session - only show after May 1st  
+          if (sessionDate.getMonth() === 5) { // June is month 5 (zero-based)
+            const may1st = new Date(sessionDate.getFullYear(), 4, 1); // May 1st
+            return isWithinTwoMonths && today >= may1st;
+          }
+          
+          // All other dates (March, April) follow the two-month rule
+          return isWithinTwoMonths;
+        });
+        
+        // Add eligible dates to dropdown
+        eligibleDates.forEach(dateObj => {
+          const option = document.createElement('option');
+          option.value = dateObj.date;
+          option.textContent = dateObj.label;
+          dateSelect.appendChild(option);
+        });
+        
+        // If no eligible dates, add a message
+        if (eligibleDates.length === 0) {
+          const option = document.createElement('option');
+          option.value = "";
+          option.textContent = "No available dates within the next two months";
+          option.disabled = true;
+          dateSelect.appendChild(option);
+        }
+      }
+      
+      // When a date is selected from the dropdown
+      dateSelect.addEventListener('change', function() {
+        // Update the hidden date input
+        dateInput.value = this.value;
+        
+        // Generate time slots for the selected date
+        if (this.value) {
+          generateTimeSlots();
+        } else {
+          timeSlotsContainer.innerHTML = '<p class="no-slots-message">Please select a date to view available time slots.</p>';
+        }
+      });
+      
+      // Generate time slots from 9am to 10:55am in 5 minute increments
+      function generateTimeSlots() {
+        timeSlotsContainer.innerHTML = '';
+        
+        if (!dateInput.value) {
+          timeSlotsContainer.innerHTML = '<p class="no-slots-message">Please select a date to view available time slots.</p>';
+          return;
+        }
+        
+        let startTime = new Date();
+        startTime.setHours(9, 0, 0); // 9:00 AM
+        
+        let endTime = new Date();
+        endTime.setHours(11, 0, 0); // 11:00 AM
+        
+        let currentTime = new Date(startTime);
+        
+        while (currentTime < endTime) {
+          const timeString = formatTime(currentTime);
+          const slot = document.createElement('div');
+          slot.className = 'time-slot';
+          slot.dataset.time = timeString;
+          slot.textContent = timeString;
+          
+          // Check if slot is already booked for the selected date
+          checkTimeSlotAvailability(dateInput.value, timeString, slot);
+          
+          slot.addEventListener('click', function() {
+            if (!slot.classList.contains('unavailable')) {
+              // Clear previous selections
+              document.querySelectorAll('.time-slot.selected').forEach(el => {
+                el.classList.remove('selected');
+              });
+              
+              // Select this slot
+              slot.classList.add('selected');
+              selectedTimeSlot = timeString;
+            }
+          });
+          
+          timeSlotsContainer.appendChild(slot);
+          
+          // Increment by 5 minutes
+          currentTime.setMinutes(currentTime.getMinutes() + 5);
+        }
+      }
+      
+      // Format time as HH:MM AM/PM
+      function formatTime(date) {
+        let hours = date.getHours();
+        const minutes = date.getMinutes();
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        
+        hours = hours % 12;
+        hours = hours ? hours : 12;
+        
+        const minutesStr = minutes < 10 ? '0' + minutes : minutes;
+        
+        return `${hours}:${minutesStr} ${ampm}`;
+      }
+      
+      // Check if a time slot is available
+      function checkTimeSlotAvailability(date, time, slotElement) {
+        fetch(`/api/check-availability?date=${date}&time=${time}`)
+          .then(response => response.json())
+          .then(data => {
+            if (!data.available) {
+              slotElement.classList.add('unavailable');
+            }
+          })
+          .catch(error => {
+            console.error('Error checking availability:', error);
+          });
+      }
+      
+      // Submit appointment
+      submitBtn.addEventListener('click', function() {
+        // Validate form
+        if (!validateForm()) {
+          showToast('Please fill all required fields and select a time slot.', 'error');
+          return;
+        }
+        
+        const appointmentData = {
+          name: nameInput.value,
+          email: emailInput.value,
+          department: departmentInput.value,
+          position: positionInput.value,
+          date: dateInput.value,
+          time: selectedTimeSlot
+        };
+        
+        // Submit to server
+        fetch('/api/appointments', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': 'headshot-signup-token'
+          },
+          body: JSON.stringify(appointmentData)
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            showToast('Appointment scheduled successfully!', 'success');
+            resetForm();
+            generateTimeSlots(); // Refresh time slots
+          } else {
+            showToast(data.message || 'Failed to schedule appointment.', 'error');
+          }
+        })
+        .catch(error => {
+          console.error('Error submitting appointment:', error);
+          showToast('An error occurred. Please try again.', 'error');
+        });
+      });
+      
+      // Look up appointment
+      lookupBtn.addEventListener('click', function() {
+        const email = lookupEmailInput.value;
+        
+        if (!email) {
+          showToast('Please enter your email address.', 'error');
+          return;
+        }
+        
+        fetch(`/api/appointments/lookup?email=${encodeURIComponent(email)}`)
+          .then(response => response.json())
+          .then(data => {
+            if (data.found) {
+              // Display appointment details
+              resultName.textContent = data.appointment.name;
+              resultEmail.textContent = data.appointment.email;
+              resultDepartment.textContent = data.appointment.department;
+              resultPosition.textContent = data.appointment.position;
+              resultDate.textContent = formatDate(data.appointment.date);
+              resultTime.textContent = data.appointment.time;
+              
+              selectedAppointmentId = data.appointment.id;
+              appointmentResult.classList.remove('hidden');
+            } else {
+              showToast('No appointment found for this email.', 'warning');
+              appointmentResult.classList.add('hidden');
+            }
+          })
+          .catch(error => {
+            console.error('Error looking up appointment:', error);
+            showToast('An error occurred. Please try again.', 'error');
+          });
+      });
+      
+      // Cancel appointment
+      cancelBtn.addEventListener('click', function() {
+        if (!selectedAppointmentId) {
+          showToast('No appointment selected.', 'error');
+          return;
+        }
+        
+        if (!confirm('Are you sure you want to cancel this appointment?')) {
+          return;
+        }
+        
+        fetch(`/api/appointments/${selectedAppointmentId}`, {
+          method: 'DELETE',
+          headers: {
+            'X-CSRF-Token': 'headshot-signup-token'
+          }
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            showToast('Appointment cancelled successfully.', 'success');
+            appointmentResult.classList.add('hidden');
+            lookupEmailInput.value = '';
+          } else {
+            showToast(data.message || 'Failed to cancel appointment.', 'error');
+          }
+        })
+        .catch(error => {
+          console.error('Error cancelling appointment:', error);
+          showToast('An error occurred. Please try again.', 'error');
+        });
+      });
+      
+      // Validate form
+      function validateForm() {
+        if (!nameInput.value || !emailInput.value || !departmentInput.value || 
+            !positionInput.value || !dateInput.value || !selectedTimeSlot) {
+          return false;
+        }
+        return true;
+      }
+      
+      // Reset form
+      function resetForm() {
+        nameInput.value = '';
+        emailInput.value = '';
+        departmentInput.value = '';
+        positionInput.value = '';
+        dateSelect.selectedIndex = 0;
+        dateInput.value = '';
+        selectedTimeSlot = null;
+        
+        document.querySelectorAll('.time-slot.selected').forEach(el => {
+          el.classList.remove('selected');
+        });
+        
+        timeSlotsContainer.innerHTML = '<p class="no-slots-message">Please select a date to view available time slots.</p>';
+      }
+      
+      // Format date as Month DD, YYYY
+      function formatDate(dateString) {
+        const options = { year: 'numeric', month: 'long', day: 'numeric' };
+        return new Date(dateString).toLocaleDateString('en-US', options);
+      }
+      
+      // Show toast notification
+      function showToast(message, type = 'success') {
+        toast.textContent = message;
+        toast.className = `toast ${type} show`;
+        
+        setTimeout(() => {
+          toast.classList.remove('show');
+        }, 3000);
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+<svg width="500" height="350" xmlns="http://www.w3.org/2000/svg">
+<rect width="500" height="350" fill="#f9f9f9"/>
+<rect x="50" y="50" width="400" height="250" fill="#f0f0f0" stroke="#999" stroke-width="2"/>
+<rect x="150" y="100" width="100" height="150" fill="#500000" stroke="#333" stroke-width="2"/>
+<text x="200" y="175" font-family="Arial" font-size="16" fill="white" text-anchor="middle">Building C</text>
+<rect x="300" y="150" width="80" height="50" fill="#ddd" stroke="#333" stroke-width="2"/>
+<text x="340" y="180" font-family="Arial" font-size="14" fill="#333" text-anchor="middle">Lot B</text>
+<circle cx="200" cy="100" r="8" fill="red"/>
+<text x="200" y="85" font-family="Arial" font-size="14" fill="#500000" text-anchor="middle">Photo Studio</text>
+<text x="250" y="320" font-family="Arial" font-size="18" fill="#500000" text-anchor="middle">Campus Map</text>
+<text x="250" y="30" font-family="Arial" font-size="16" fill="#333" text-anchor="middle">Main Campus</text>
+</svg>

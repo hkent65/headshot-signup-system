@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Headshot Appointments - Admin Dashboard</title>
+    <!-- Add jsPDF library for PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+    <style>
+        body {
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #500000;
+            color: white;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            color: #333;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+        }
+        .actions {
+            display: flex;
+            gap: 10px;
+        }
+        .btn {
+            background-color: #500000;
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: background-color 0.2s;
+        }
+        .btn:hover {
+            background-color: #700000;
+        }
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid #500000;
+            color: #500000;
+        }
+        .btn-outline:hover {
+            background-color: #f5f5f5;
+        }
+        .section {
+            margin-bottom: 30px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #500000;
+            font-weight: 600;
+            color: white;
+        }
+        tr:hover {
+            background-color: #f9f9f9;
+        }
+        .loading {
+            text-align: center;
+            padding: 20px;
+            font-style: italic;
+            color: #666;
+        }
+        .error-message {
+            color: #d9534f;
+            padding: 10px;
+            background-color: #f9f2f2;
+            border-radius: 4px;
+            margin-top: 10px;
+            display: none;
+        }
+        .action-cell {
+            display: flex;
+            gap: 5px;
+        }
+        .btn-sm {
+            padding: 4px 8px;
+            font-size: 12px;
+        }
+        .btn-danger {
+            background-color: #d9534f;
+        }
+        .btn-danger:hover {
+            background-color: #c9302c;
+        }
+        .filter-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            align-items: center;
+        }
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        input[type="date"] {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .summary-stats {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .stat-card {
+            flex: 1;
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 6px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #500000;
+        }
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Headshot Appointments Dashboard</h1>
+            <div class="actions">
+                <button id="export-csv" class="btn btn-outline">Export CSV</button>
+                <button id="export-pdf" class="btn btn-outline">Export PDF</button>
+                <a href="/email-test.html" class="btn btn-outline">Test Emails</a>
+                <button id="refresh-data" class="btn">Refresh Data</button>
+            </div>
+        </div>
+        
+        <div class="summary-stats">
+            <div class="stat-card">
+                <div class="stat-value" id="total-appointments">0</div>
+                <div class="stat-label">Total Appointments</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="upcoming-appointments">0</div>
+                <div class="stat-label">Upcoming</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="today-appointments">0</div>
+                <div class="stat-label">Today</div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="filter-row">
+                <div class="filter-group">
+                    <label for="date-filter">Filter by date:</label>
+                    <input type="date" id="date-filter">
+                </div>
+                <button id="clear-filters" class="btn btn-outline btn-sm">Clear Filters</button>
+            </div>
+            
+            <h2>Appointments</h2>
+            <div id="appointments-error" class="error-message"></div>
+            <table id="appointments-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Department</th>
+                        <th>Position</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="appointments-data">
+                    <tr class="loading">
+                        <td colspan="7">Loading appointment data...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Cache DOM elements
+        const appointmentsTable = document.getElementById("appointments-data");
+        const appointmentsError = document.getElementById("appointments-error");
+        const refreshButton = document.getElementById("refresh-data");
+        const dateFilter = document.getElementById("date-filter");
+        const clearFiltersButton = document.getElementById("clear-filters");
+        const exportCsvButton = document.getElementById("export-csv");
+        const exportPdfButton = document.getElementById("export-pdf");
+        const totalAppointments = document.getElementById("total-appointments");
+        const upcomingAppointments = document.getElementById("upcoming-appointments");
+        const todayAppointments = document.getElementById("today-appointments");
+        
+        // Track all appointments
+        let allAppointments = [];
+        
+        // Fetch appointments data
+        function fetchAppointments() {
+            appointmentsTable.innerHTML = '<tr class="loading"><td colspan="7">Loading appointment data...</td></tr>';
+            appointmentsError.style.display = 'none';
+            
+            fetch("/admin/appointments")
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(appointments => {
+                    allAppointments = appointments;
+                    updateStatistics(appointments);
+                    displayAppointments(appointments);
+                })
+                .catch(error => {
+                    console.error("Error fetching appointments:", error);
+                    appointmentsTable.innerHTML = '';
+                    appointmentsError.textContent = `Error loading appointments: ${error.message}`;
+                    appointmentsError.style.display = 'block';
+                });
+        }
+        
+        // Display appointments
+        function displayAppointments(appointments, filterDate = null) {
+            appointmentsTable.innerHTML = ''; // Clear loading message
+            
+            // Apply date filter if provided
+            if (filterDate) {
+                appointments = appointments.filter(apt => apt.date === filterDate);
+            }
+            
+            if (appointments.length === 0) {
+                appointmentsTable.innerHTML = '<tr><td colspan="7">No appointments found</td></tr>';
+                return;
+            }
+            
+            // Sort by date and time
+            appointments.sort((a, b) => {
+                if (a.date === b.date) {
+                    return a.time.localeCompare(b.time);
+                }
+                return new Date(a.date) - new Date(b.date);
+            });
+            
+            appointments.forEach(appointment => {
+                const row = document.createElement("tr");
+                
+                const formattedDate = formatDate(appointment.date);
+                
+                row.innerHTML = `
+                    <td>${appointment.name || 'N/A'}</td>
+                    <td>${appointment.email || 'N/A'}</td>
+                    <td>${appointment.department || 'N/A'}</td>
+                    <td>${appointment.position || 'N/A'}</td>
+                    <td>${formattedDate}</td>
+                    <td>${appointment.time || 'N/A'}</td>
+                    <td class="action-cell">
+                        <button class="btn btn-sm btn-danger delete-btn" data-id="${appointment.id}">Cancel</button>
+                    </td>
+                `;
+                appointmentsTable.appendChild(row);
+            });
+            
+            // Add event listeners for action buttons
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const id = this.getAttribute('data-id');
+                    if (confirm('Are you sure you want to cancel this appointment?')) {
+                        cancelAppointment(id);
+                    }
+                });
+            });
+        }
+        
+        // Cancel appointment
+        function cancelAppointment(id) {
+            fetch(`/api/appointments/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-Token': 'headshot-signup-token'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Refresh the data
+                    fetchAppointments();
+                    alert('Appointment cancelled successfully');
+                } else {
+                    alert(data.message || 'Failed to cancel appointment');
+                }
+            })
+            .catch(error => {
+                console.error('Error cancelling appointment:', error);
+                alert('An error occurred while cancelling the appointment');
+            });
+        }
+        
+        // Update statistics
+        function updateStatistics(appointments) {
+            totalAppointments.textContent = appointments.length;
+            
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            const todayString = formatDateForComparison(today);
+            
+            // Count today's appointments
+            const todayCount = appointments.filter(apt => apt.date === todayString).length;
+            todayAppointments.textContent = todayCount;
+            
+            // Count upcoming appointments (today and future)
+            const upcomingCount = appointments.filter(apt => {
+                const aptDate = new Date(apt.date);
+                return aptDate >= today;
+            }).length;
+            upcomingAppointments.textContent = upcomingCount;
+        }
+        
+        // Format date for display (Month DD, YYYY)
+        function formatDate(dateString) {
+            if (!dateString) return 'N/A';
+            
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            return new Date(dateString).toLocaleDateString('en-US', options);
+        }
+        
+        // Format date for comparison (YYYY-MM-DD)
+        function formatDateForComparison(date) {
+            return date.toISOString().split('T')[0];
+        }
+        
+        // Export data to CSV
+        function exportToCsv() {
+            if (allAppointments.length === 0) {
+                alert('No data to export');
+                return;
+            }
+            
+            // Create CSV header
+            let csvContent = "Name,Email,Department,Position,Date,Time\n";
+            
+            // Add data rows
+            allAppointments.forEach(apt => {
+                const formattedDate = formatDate(apt.date);
+                const row = [
+                    `"${apt.name || ''}"`,
+                    `"${apt.email || ''}"`,
+                    `"${apt.department || ''}"`,
+                    `"${apt.position || ''}"`,
+                    `"${formattedDate}"`,
+                    `"${apt.time || ''}"`
+                ].join(',');
+                csvContent += row + "\n";
+            });
+            
+            // Create download link
+            const encodedUri = encodeURI("data:text/csv;charset=utf-8," + csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "headshot_appointments.csv");
+            document.body.appendChild(link);
+            
+            // Trigger download
+            link.click();
+            document.body.removeChild(link);
+        }
+        
+        // Event listeners
+        refreshButton.addEventListener('click', fetchAppointments);
+        
+        dateFilter.addEventListener('change', function() {
+            if (this.value) {
+                displayAppointments(allAppointments, this.value);
+            } else {
+                displayAppointments(allAppointments);
+            }
+        });
+        
+        clearFiltersButton.addEventListener('click', function() {
+            dateFilter.value = '';
+            displayAppointments(allAppointments);
+        });
+        
+        exportCsvButton.addEventListener('click', exportToCsv);
+        exportPdfButton.addEventListener('click', exportToPdf);
+        
+        // Export to PDF
+        function exportToPdf() {
+            if (allAppointments.length === 0) {
+                alert('No data to export');
+                return;
+            }
+            
+            // Initialize jsPDF
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            // Add title
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(18);
+            doc.text('Headshot Appointment Schedule', 14, 22);
+            
+            // Add date
+            doc.setFontSize(12);
+            doc.setFont('helvetica', 'normal');
+            const today = new Date();
+            doc.text(`Report Generated: ${today.toLocaleDateString()} ${today.toLocaleTimeString()}`, 14, 30);
+            
+            // Create table data
+            const tableColumn = ["Name", "Email", "Department", "Position", "Date", "Time"];
+            const tableRows = [];
+            
+            // Get current filter date if any
+            const filterDateValue = dateFilter.value;
+            let appointmentsToExport = allAppointments;
+            
+            if (filterDateValue) {
+                appointmentsToExport = allAppointments.filter(apt => apt.date === filterDateValue);
+            }
+            
+            // Sort appointments by date and time
+            appointmentsToExport.sort((a, b) => {
+                if (a.date === b.date) {
+                    return a.time.localeCompare(b.time);
+                }
+                return new Date(a.date) - new Date(b.date);
+            });
+            
+            // Add data rows
+            appointmentsToExport.forEach(apt => {
+                const formattedDate = formatDate(apt.date);
+                const tableRow = [
+                    apt.name || 'N/A',
+                    apt.email || 'N/A',
+                    apt.department || 'N/A',
+                    apt.position || 'N/A',
+                    formattedDate,
+                    apt.time || 'N/A'
+                ];
+                tableRows.push(tableRow);
+            });
+            
+            // Generate table with auto-table plugin
+            doc.autoTable({
+                head: [tableColumn],
+                body: tableRows,
+                startY: 40,
+                theme: 'grid',
+                styles: {
+                    fontSize: 10,
+                    cellPadding: 3,
+                    overflow: 'linebreak',
+                    halign: 'left'
+                },
+                headStyles: {
+                    fillColor: [80, 0, 0], // #500000
+                    textColor: [255, 255, 255],
+                    fontStyle: 'bold'
+                },
+                alternateRowStyles: {
+                    fillColor: [245, 245, 245]
+                },
+                margin: { top: 40 }
+            });
+            
+            // Add footer with stats
+            const pageCount = doc.internal.getNumberOfPages();
+            for (let i = 1; i <= pageCount; i++) {
+                doc.setPage(i);
+                doc.setFontSize(10);
+                doc.text(`Page ${i} of ${pageCount}`, doc.internal.pageSize.width - 30, doc.internal.pageSize.height - 10);
+                doc.text(`Total Appointments: ${appointmentsToExport.length}`, 14, doc.internal.pageSize.height - 10);
+            }
+            
+            // Save the PDF
+            doc.save(`headshot_appointments${filterDateValue ? '_' + filterDateValue : ''}.pdf`);
+        }
+        
+        // Initial data load
+        document.addEventListener('DOMContentLoaded', fetchAppointments);
+    </script>
+</body>
+</html>
