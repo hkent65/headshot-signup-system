@@ -510,23 +510,19 @@ app.get("/user/validate", (req, res) => {
   res.status(200).json({ valid: true });
 });
 
-// Start server - configured for both local development and Vercel deployment
+// Start server - configured for Render and other traditional Node.js hosting
 const PORT = process.env.PORT || config.server.port || 3000;
 
-// Only actually listen on a port if we're not in a serverless environment
-// This is crucial for Vercel deployment which uses the Node.js module exports pattern
-if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
-  // Allow application to be accessed from any IP address for local development
-  app.listen(PORT, '0.0.0.0', () => {
-    console.log(`\n${config.app.name} Server Started`);
-    console.log(`---------------------------------------`);
-    console.log(`Environment: ${config.server.environment}`);
-    console.log(`Base URL: ${config.server.baseUrl}`);
-    console.log(`Local URL: http://localhost:${PORT}`);
-    console.log(`Admin Dashboard: ${config.server.baseUrl}/admin.html`);
-    console.log(`---------------------------------------`);
-  });
-}
+// Listen on all interfaces (0.0.0.0)
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`\n${config.app.name} Server Started`);
+  console.log(`---------------------------------------`);
+  console.log(`Environment: ${config.server.environment}`);
+  console.log(`Base URL: ${config.server.baseUrl}`);
+  console.log(`Local URL: http://localhost:${PORT}`);
+  console.log(`Admin Dashboard: ${config.server.baseUrl}/admin.html`);
+  console.log(`---------------------------------------`);
+});
 
-// Export the Express app for serverless environments (Vercel)
+// For compatibility with serverless environments
 module.exports = app;
