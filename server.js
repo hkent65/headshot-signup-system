@@ -58,12 +58,7 @@ const connectToConfiguredDatabase = async () => {
       // How long to wait for initial connection
       connectTimeoutMS: 10000,
       // Connection pool size for better performance
-      maxPoolSize: 10,
-      // Keep connection alive
-      keepAlive: true,
-      // Use the new MongoDB driver unified topology
-      useNewUrlParser: true,
-      useUnifiedTopology: true
+      maxPoolSize: 10
     });
     console.log("Connected to MongoDB");
   } catch (err) {
