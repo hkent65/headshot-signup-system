@@ -1,5 +1,13 @@
 # Deploying to Render
 
+This guide explains how to deploy your Headshot Signup System to Render.com.
+
+## Current Deployment Status
+
+The application is currently deployed at: https://headshot-signup-system.onrender.com
+
+To access the admin dashboard: https://headshot-signup-system.onrender.com/admin.html
+
 ## Setting Up Your Render Account
 
 1. Sign up for a free account at [render.com](https://render.com)

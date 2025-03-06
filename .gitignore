@@ -23,8 +23,9 @@ logs
 .DS_Store
 Thumbs.db
 
-# Vercel
+# Deployment files
 .vercel
+.deployment
 
 # ngrok
 ngrok-url.txt

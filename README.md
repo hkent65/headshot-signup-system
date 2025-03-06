@@ -16,11 +16,11 @@ A web application for scheduling faculty and staff professional headshots.
 - Vanilla JavaScript frontend
 - Responsive CSS
 
-## Deployment to Vercel
+## Deployment to Render
 
 ### Prerequisites
 
-1. A [Vercel](https://vercel.com) account
+1. A [Render](https://render.com) account
 2. A [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) database
 3. A [GitHub](https://github.com) account
 
@@ -28,37 +28,40 @@ A web application for scheduling faculty and staff professional headshots.
 
 1. Set up your GitHub repository:
    - Create a new GitHub repository
-   - Push this codebase to your GitHub repository using the commands:
-     ```
-     git remote add origin https://github.com/YOUR_USERNAME/headshot-signup-system.git
-     git push -u origin main
-     ```
+   - Push this codebase to your GitHub repository
 
 2. Set up MongoDB Atlas:
    - Create a MongoDB Atlas account and set up a free cluster
    - Create a database user and get your connection string
-   - Update your `.env` file with the real MongoDB connection string
+   - In Network Access, either:
+     - Add your specific IP address
+     - Allow access from anywhere (0.0.0.0/0) for easiest setup
 
-3. Deploy to Vercel:
-   - Go to [vercel.com](https://vercel.com) and sign up or log in
-   - Click "Add New" > "Project"
-   - Import your GitHub repository
+3. Deploy to Render:
+   - Go to [render.com](https://render.com) and sign up or log in
+   - Click "New" > "Web Service"
+   - Connect your GitHub repository
    - Configure the project:
-     - Framework Preset: Other
-     - Root Directory: ./
-     - Build Command: npm install
-     - Output Directory: public
+     - Name: headshot-signup-system (or your preferred name)
+     - Environment: Node
+     - Build Command: `npm install && npm run build`
+     - Start Command: `npm start`
    - Configure environment variables:
-     - Copy all variables from your `.env` file
-     - Ensure MONGODB_URI has your actual MongoDB Atlas connection string
-     - Set NODE_ENV to "production"
+     - NODE_ENV: production
+     - USE_MEMORY_DB: false
+     - MONGODB_URI: (your MongoDB Atlas connection string)
+     - BASE_URL: https://headshot-signup-system.onrender.com (or your actual Render URL)
+     - ADMIN_USERNAME: admin (or your preferred admin username)
+     - ADMIN_PASSWORD: (your secure password)
+     - CSRF_TOKEN: (your secure token)
    - Deploy!
 
-4. For subsequent deployments after making changes:
-   - Commit and push your changes to GitHub
-   - Vercel will automatically deploy the updates
+4. After deployment:
+   - Verify your application is accessible at your Render URL
+   - Access the admin dashboard at your-render-url/admin.html
+   - If you need to make changes to environment variables, redeploy after saving them
 
-For more detailed instructions, see the [DEPLOYMENT.md](DEPLOYMENT.md) file.
+For more detailed instructions, see the [RENDER-SETUP.md](RENDER-SETUP.md) file.
 
 ## Local Development
 
