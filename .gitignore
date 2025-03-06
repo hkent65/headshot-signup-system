@@ -26,5 +26,12 @@ Thumbs.db
 # Vercel
 .vercel
 
+# ngrok
+ngrok-url.txt
+ngrok.js
+ngrok-setup.js
+NGROK-INSTRUCTIONS.md
+
 # MongoDB memory server cache
 **/mongodb-memory-server/
+node_modules/.cache/mongodb-memory-server/

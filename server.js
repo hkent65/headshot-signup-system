@@ -45,7 +45,15 @@ const connectToDatabase = async () => {
 // Connect to the database URI specified in config
 const connectToConfiguredDatabase = async () => {
   try {
-    await mongoose.connect(config.database.uri);
+    // Add connection options with timeout to prevent Vercel serverless function timeouts
+    await mongoose.connect(config.database.uri, {
+      // Set server selection timeout - how long to wait for server selection
+      serverSelectionTimeoutMS: 5000,
+      // Set socket timeout - how long to wait for operations (queries)
+      socketTimeoutMS: 30000,
+      // How long to wait for initial connection
+      connectTimeoutMS: 10000,
+    });
     console.log("Connected to MongoDB");
   } catch (err) {
     console.error("MongoDB connection error:", err);
@@ -505,14 +513,20 @@ app.get("/user/validate", (req, res) => {
 // Start server - configured for both local development and Vercel deployment
 const PORT = process.env.PORT || config.server.port || 3000;
 
-// Allow application to be accessed from any IP address
-// Note: Vercel handles this differently in production and will override these settings
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`\n${config.app.name} Server Started`);
-  console.log(`---------------------------------------`);
-  console.log(`Environment: ${config.server.environment}`);
-  console.log(`Base URL: ${config.server.baseUrl}`);
-  console.log(`Local URL: http://localhost:${PORT}`);
-  console.log(`Admin Dashboard: ${config.server.baseUrl}/admin.html`);
-  console.log(`---------------------------------------`);
-});
+// Only actually listen on a port if we're not in a serverless environment
+// This is crucial for Vercel deployment which uses the Node.js module exports pattern
+if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
+  // Allow application to be accessed from any IP address for local development
+  app.listen(PORT, '0.0.0.0', () => {
+    console.log(`\n${config.app.name} Server Started`);
+    console.log(`---------------------------------------`);
+    console.log(`Environment: ${config.server.environment}`);
+    console.log(`Base URL: ${config.server.baseUrl}`);
+    console.log(`Local URL: http://localhost:${PORT}`);
+    console.log(`Admin Dashboard: ${config.server.baseUrl}/admin.html`);
+    console.log(`---------------------------------------`);
+  });
+}
+
+// Export the Express app for serverless environments (Vercel)
+module.exports = app;
