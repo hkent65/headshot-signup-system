@@ -4,12 +4,16 @@ const bodyParser = require("body-parser");
 const path = require("path");
 const mongoose = require("mongoose");
 const helmet = require("helmet");
+const compression = require("compression");
 const rateLimit = require("express-rate-limit");
 const config = require("./config");
 const { basicAuth } = require("./middleware/auth");
 
 // Initialize Express app
 const app = express();
+
+// Add compression to all responses
+app.use(compression());
 
 // Setup database connection
 const connectToDatabase = async () => {
@@ -45,14 +49,21 @@ const connectToDatabase = async () => {
 // Connect to the database URI specified in config
 const connectToConfiguredDatabase = async () => {
   try {
-    // Add connection options with timeout to prevent Vercel serverless function timeouts
+    // Add connection options with optimized settings for performance
     await mongoose.connect(config.database.uri, {
       // Set server selection timeout - how long to wait for server selection
       serverSelectionTimeoutMS: 5000,
       // Set socket timeout - how long to wait for operations (queries)
-      socketTimeoutMS: 30000,
+      socketTimeoutMS: 45000,
       // How long to wait for initial connection
       connectTimeoutMS: 10000,
+      // Connection pool size for better performance
+      maxPoolSize: 10,
+      // Keep connection alive
+      keepAlive: true,
+      // Use the new MongoDB driver unified topology
+      useNewUrlParser: true,
+      useUnifiedTopology: true
     });
     console.log("Connected to MongoDB");
   } catch (err) {
@@ -60,7 +71,7 @@ const connectToConfiguredDatabase = async () => {
     console.error("Current MongoDB URI (masked):", config.database.uri.replace(/:([^:@]+)@/, ":****@"));
     // In production, we might want to exit the process if DB connection fails
     if (config.server.environment === 'production') {
-      console.error("Database connection critical in production, check your Vercel environment variables");
+      console.error("Database connection critical in production, check your Render environment variables");
     }
   }
 };
@@ -148,8 +159,11 @@ app.use((req, res, next) => {
 // Custom middleware to protect admin assets
 app.use('/admin.html', basicAuth);
 
-// Serve static files
-app.use(express.static(path.join(__dirname, "public")));
+// Serve static files with caching
+app.use(express.static(path.join(__dirname, "public"), {
+  maxAge: '1d', // Cache static assets for 1 day
+  etag: true,   // Use ETags for cache validation
+}));
 
 // Routes
 app.get("/", (req, res) => {
