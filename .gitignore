@@ -26,6 +26,7 @@ Thumbs.db
 # Deployment files
 .vercel
 .deployment
+.fly
 
 # ngrok
 ngrok-url.txt

@@ -16,11 +16,11 @@ A web application for scheduling faculty and staff professional headshots.
 - Vanilla JavaScript frontend
 - Responsive CSS
 
-## Deployment to Render
+## Deployment to Fly.io
 
 ### Prerequisites
 
-1. A [Render](https://render.com) account
+1. A [Fly.io](https://fly.io) account
 2. A [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) database
 3. A [GitHub](https://github.com) account
 
@@ -37,31 +37,29 @@ A web application for scheduling faculty and staff professional headshots.
      - Add your specific IP address
      - Allow access from anywhere (0.0.0.0/0) for easiest setup
 
-3. Deploy to Render:
-   - Go to [render.com](https://render.com) and sign up or log in
-   - Click "New" > "Web Service"
-   - Connect your GitHub repository
-   - Configure the project:
-     - Name: headshot-signup-system (or your preferred name)
-     - Environment: Node
-     - Build Command: `npm install && npm run build`
-     - Start Command: `npm start`
-   - Configure environment variables:
-     - NODE_ENV: production
-     - USE_MEMORY_DB: false
-     - MONGODB_URI: (your MongoDB Atlas connection string)
-     - BASE_URL: https://headshot-signup-system.onrender.com (or your actual Render URL)
-     - ADMIN_USERNAME: admin (or your preferred admin username)
-     - ADMIN_PASSWORD: (your secure password)
-     - CSRF_TOKEN: (your secure token)
-   - Deploy!
+3. Install the Fly.io CLI:
+   - Mac/Linux: `curl -L https://fly.io/install.sh | sh`
+   - Windows: Download the installer from the Fly.io website
+   - Or use Homebrew: `brew install flyctl`
 
-4. After deployment:
-   - Verify your application is accessible at your Render URL
-   - Access the admin dashboard at your-render-url/admin.html
-   - If you need to make changes to environment variables, redeploy after saving them
+4. Deploy to Fly.io:
+   - Authenticate: `fly auth login`
+   - Initialize (first time only): `fly launch`
+   - Set secrets:
+     ```
+     fly secrets set MONGODB_URI="your-mongodb-connection-string"
+     fly secrets set ADMIN_USERNAME="admin"
+     fly secrets set ADMIN_PASSWORD="your-password"
+     fly secrets set BASE_URL="https://your-app-name.fly.dev"
+     ```
+   - Deploy: `fly deploy`
 
-For more detailed instructions, see the [RENDER-SETUP.md](RENDER-SETUP.md) file.
+5. After deployment:
+   - Open your app: `fly open`
+   - Access the admin dashboard at your-fly-url/admin.html
+   - Monitor with: `fly logs` and `fly status`
+
+For more detailed instructions, see the [FLY-SETUP.md](FLY-SETUP.md) file.
 
 ## Local Development
 

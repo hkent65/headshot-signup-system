@@ -49,14 +49,14 @@ const connectToDatabase = async () => {
 // Connect to the database URI specified in config
 const connectToConfiguredDatabase = async () => {
   try {
-    // Add connection options with optimized settings for performance
+    // Add connection options with optimized settings for performance on Fly.io
     await mongoose.connect(config.database.uri, {
       // Set server selection timeout - how long to wait for server selection
-      serverSelectionTimeoutMS: 5000,
+      serverSelectionTimeoutMS: 10000,
       // Set socket timeout - how long to wait for operations (queries)
-      socketTimeoutMS: 45000,
+      socketTimeoutMS: 60000,
       // How long to wait for initial connection
-      connectTimeoutMS: 10000,
+      connectTimeoutMS: 15000,
       // Connection pool size for better performance
       maxPoolSize: 10
     });
@@ -66,7 +66,7 @@ const connectToConfiguredDatabase = async () => {
     console.error("Current MongoDB URI (masked):", config.database.uri.replace(/:([^:@]+)@/, ":****@"));
     // In production, we might want to exit the process if DB connection fails
     if (config.server.environment === 'production') {
-      console.error("Database connection critical in production, check your Render environment variables");
+      console.error("Database connection critical in production, check your Fly.io secrets");
     }
   }
 };
@@ -519,8 +519,8 @@ app.get("/user/validate", (req, res) => {
   res.status(200).json({ valid: true });
 });
 
-// Start server - configured for Render and other traditional Node.js hosting
-const PORT = process.env.PORT || config.server.port || 3000;
+// Start server - configured for Fly.io and other traditional Node.js hosting
+const PORT = process.env.PORT || config.server.port || 8080;
 
 // Listen on all interfaces (0.0.0.0)
 app.listen(PORT, '0.0.0.0', () => {
